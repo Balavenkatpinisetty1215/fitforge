@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitSquad — Move as One</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo">F</div>
+        <div>
+          FIT<span>SQUAD</span>
+          <div class="tagline">MOVE AS ONE</div>
+        </div>
+      </div>
+
+      <div class="nav-controls" id="navControls" hidden>
+        <span class="live-indicator" id="liveIndicator" title="Real-time SSE connection">
+          <span class="pulse-dot"></span> Live Sync
+        </span>
+        <span class="user-badge" id="navUserBadge">🏃 Aarav</span>
+        <button class="btn-secondary" id="logoutBtn" type="button">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container auth-wrapper" id="authSection">
+    <div class="card auth-card">
+      <div class="eyebrow">3-Tier Real-Time Fitness Arena</div>
+      <h2>Sign in to your Squad</h2>
+      <p class="muted">Demo accounts use password <strong>FitSquad123!</strong> (e.g., <code>aarav</code>, <code>maya</code>, <code>kabir</code>).</p>
+
+      <div class="tabs auth-tabs">
+        <button class="tab active" data-auth-mode="login" type="button">Login</button>
+        <button class="tab" data-auth-mode="register" type="button">Register</button>
+      </div>
+
+      <form id="authForm">
+        <div class="form-group">
+          <label for="authUsername">Username</label>
+          <input class="input" id="authUsername" type="text" required minlength="3" maxlength="24" value="aarav">
+        </div>
+
+        <div class="form-group" id="displayNameGroup" hidden>
+          <label for="authName">Display Name</label>
+          <input class="input" id="authName" type="text" minlength="2" maxlength="32" placeholder="Alex Mercer">
+        </div>
+
+        <div class="form-group">
+          <label for="authPassword">Password</label>
+          <input class="input" id="authPassword" type="password" required minlength="6" value="FitSquad123!">
+        </div>
+
+        <button class="btn-primary full-width" type="submit" id="authSubmitBtn">Sign In</button>
+      </form>
+    </div>
+  </main>
+
+  <main class="container main-content" id="dashboardSection" hidden>
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Your fitness arena</div>
+        <h1>Squad Dashboard<span>.</span></h1>
+        <p class="muted">Show up. Stack points. Bring your squad to the top.</p>
+      </div>
+      <div class="actions">
+        <button class="btn-secondary" id="joinSquadBtn" type="button">+ Join squad</button>
+        <button class="btn-secondary" id="openCreateModalBtn" type="button">+ Create squad</button>
+        <button class="btn-primary" id="openWorkoutModalBtn" type="button">+ Log workout</button>
+      </div>
+    </div>
+
+    <div class="squad-bar">
+      <span class="label-caps">Active Squad</span>
+      <span class="pill" id="activeSquadName">Iron Legion</span>
+      <span class="pill" id="inviteCodePill">Code: IRON</span>
+      <span class="pill" id="memberCountPill">4 members</span>
+      <span class="pill" id="goalPill">Weekly goal · 2,000 pts</span>
+    </div>
+
+    <section class="grid stats-grid">
+      <div class="card">
+        <div class="stat-head">Your points <span>⚡</span></div>
+        <div class="stat-num" id="myPoints">0</div>
+        <div class="muted small">Selected challenge window</div>
+      </div>
+      <div class="card">
+        <div class="stat-head">Squad points <span>🏆</span></div>
+        <div class="stat-num" id="squadPoints">0</div>
+        <div class="muted small" id="goalSub">0% of weekly goal</div>
+      </div>
+      <div class="card">
+        <div class="stat-head">Squad rank <span>📈</span></div>
+        <div class="stat-num" id="squadRank">#1</div>
+        <div class="muted small" id="totalSquadsSub">Among 5 squads</div>
+      </div>
+      <div class="card">
+        <div class="stat-head">Your workouts <span>💪</span></div>
+        <div class="stat-num" id="workoutCount">0</div>
+        <div class="muted small">Total logged sessions</div>
+      </div>
+    </section>
+
+    <section class="card mission-card">
+      <div class="mission-top">
+        <div>
+          <div class="eyebrow">Weekly squad mission</div>
+          <h2 id="missionName">Iron Legion</h2>
+          <div class="muted small" id="missionMotto">Earn your strength, together.</div>
+        </div>
+        <div class="mission-icon">🎯</div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="goalBar"></div>
+      </div>
+      <div class="progress-labels">
+        <span id="goalPercent">0% completed</span>
+        <span id="goalRemaining">2,000 pts to goal</span>
+      </div>
+    </section>
+
+    <section class="grid two-col">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Challenge leaderboard</h3>
+            <p class="muted small">Live-synced squad rankings</p>
+          </div>
+          <div class="tabs" id="periodTabs">
+            <button class="tab" data-period="daily" type="button">Day</button>
+            <button class="tab active" data-period="weekly" type="button">Week</button>
+            <button class="tab" data-period="monthly" type="button">Month</button>
+          </div>
+        </div>
+        <div id="leaderboardList"></div>
+      </div>
+
+      <div class="card">
+        <h3>Squad members</h3>
+        <p class="muted small">Individual contributions · High-five your crew</p>
+        <div id="membersList"></div>
+      </div>
+    </section>
+
+    <section class="grid charts-grid">
+      <div class="card">
+        <h3>7-day activity trend</h3>
+        <p class="muted small">Your points compared with the squad</p>
+        <canvas id="lineChart" class="chart-canvas"></canvas>
+      </div>
+      <div class="card">
+        <h3>Squad daily output</h3>
+        <p class="muted small">Collective points earned each day</p>
+        <canvas id="barChart" class="chart-canvas"></canvas>
+      </div>
+    </section>
+
+    <section class="grid two-col-even">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Trophy case</h3>
+            <p class="muted small">Milestones unlocked by <span id="badgeMemberName">Member</span></p>
+          </div>
+          <span class="pill" id="badgeCountPill">0/8 unlocked</span>
+        </div>
+        <div class="badges-grid" id="badgesGrid"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Recent workouts</h3>
+            <p class="muted small">Indexed &amp; paginated activity log</p>
+          </div>
+          <div class="pagination-controls">
+            <button class="btn-secondary btn-sm" id="prevPageBtn" type="button">Prev</button>
+            <span class="muted small" id="pageIndicator">1 / 1</span>
+            <button class="btn-secondary btn-sm" id="nextPageBtn" type="button">Next</button>
+          </div>
+        </div>
+        <div id="workoutsList"></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      FIT SQUAD · CONSISTENCY BEATS INTENSITY · Indexed Repository &amp; Live SSE Sync
+    </footer>
+  </main>
+
+  <div class="modal-backdrop" id="workoutModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Log a workout</h2>
+        <button class="close-btn" data-close-modal="workoutModal" type="button">&times;</button>
+      </div>
+      <form id="workoutForm">
+        <div class="form-group">
+          <label for="activity">Workout type</label>
+          <select class="input" id="activity">
+            <option value="Running">Running</option>
+            <option value="Cycling">Cycling</option>
+            <option value="Push-ups">Push-ups</option>
+            <option value="Gym">Gym</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="duration">Duration (minutes)</label>
+            <input class="input" id="duration" type="number" min="1" max="180" value="30" required>
+          </div>
+          <div class="form-group">
+            <label for="distance">Distance (km)</label>
+            <input class="input" id="distance" type="number" min="0" max="100" step="0.1" value="5">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="intensity">Perceived intensity</label>
+          <select class="input" id="intensity">
+            <option value="Low">Low</option>
+            <option value="Moderate">Moderate</option>
+            <option value="High" selected>High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="note">Note (optional)</label>
+          <input class="input" id="note" type="text" maxlength="120" placeholder="How did it feel?">
+        </div>
+        <div class="estimate-box">
+          Estimated points: <strong id="pointsEstimate">37 pts</strong> <span class="muted">· MET-based calculation</span>
+        </div>
+        <button class="btn-primary full-width" type="submit">Save workout</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="createModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Create a squad</h2>
+        <button class="close-btn" data-close-modal="createModal" type="button">&times;</button>
+      </div>
+      <form id="createSquadForm">
+        <div class="form-group">
+          <label for="newSquadName">Squad name</label>
+          <input class="input" id="newSquadName" type="text" required minlength="3" maxlength="32" placeholder="Morning Mavericks">
+        </div>
+        <div class="form-group">
+          <label for="newSquadMotto">Squad motto</label>
+          <input class="input" id="newSquadMotto" type="text" maxlength="80" value="Stronger together">
+        </div>
+        <div class="form-group">
+          <label for="newSquadGoal">Weekly points goal</label>
+          <input class="input" id="newSquadGoal" type="number" min="100" max="10000" value="1800" required>
+        </div>
+        <button class="btn-primary full-width" type="submit">Create squad</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

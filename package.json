@@ -1,0 +1,15 @@
+{
+  "name": "fitsquad",
+  "version": "2.0.0",
+  "description": "3-tier real-time social fitness challenge platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": ["fitness", "express", "sse", "squad", "tracker"],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
